@@ -1,0 +1,124 @@
+/*normal sieve for generating all primes less then equals to limit
+vector<ll> sieve(ll limit) {
+    vector<bool> is_prime(limit + 1, true);
+    is_prime[0] = is_prime[1] = false;
+    for (ll i = 2; i * i <= limit; ++i) {
+        if (is_prime[i]) {
+            for (ll j = i * i; j <= limit; j += i) {
+                is_prime[j] = false;
+            }
+        }
+    }
+    vector<ll> primes;
+    for (ll i = 2; i <= limit; ++i) {
+        if (is_prime[i]) {
+            primes.push_back(i);
+        }
+    }
+    return primes;
+}
+*/
+/*prime factorization
+vector<pair<ll, ll>> prime(ll n) {
+    vector<pair<ll, ll>> result;
+        ll limit = sqrt(n);
+    vector<ll> primes = sieve(limit);
+        for (ll prime : primes) {
+        if (prime * prime > n) break;
+        ll power = 0;
+        while (n % prime == 0) {
+            n /= prime;
+            power++;
+        }
+        if (power > 0) {
+            result.push_back({prime, power}); 
+        }
+    }
+ 
+    if (n > 1) {
+        result.push_back({n, 1}); 
+    }
+    
+    return result;
+}
+*/
+/*mod inverse
+ll modInverse(ll a, ll m) {
+    ll m0 = m, x0 = 0, x1 = 1;
+    if (m == 1) return 0;
+    while (a > 1) {
+        ll q = a / m;
+        ll t = m;
+        m = a % m;
+        a = t;
+        t = x0;
+        x0 = x1 - q * x0;
+        x1 = t;
+    }
+    if (x1 < 0) x1 += m0;
+    return x1;
+}
+ll power(ll base, ll exp) {
+    ll result = 1;
+    while (exp > 0) {
+        if (exp % 2 == 1) { 
+            result *= base;
+        }
+        base *= base; 
+        exp /= 2; 
+    }
+    return result;
+}
+ll power(ll a, ll b, ll m)
+{
+    ll res = 1;
+    while (b)
+    {
+        if (b & 1)
+            res = (res * a) % m;
+        a = (a * a) % m;
+        b >>= 1;
+    }
+    return res;
+}
+
+ll modInverse(ll a, ll m)
+{
+    return power(a, m - 2, m);
+}
+*/
+/*
+ modified sieve,if you want to get smallest limit prime numbers
+vector<ll> sieve(ll limit) {
+    ll estimated_limit = (limit < 6) ? 15 : (ll)(limit * log(limit * log(limit)));
+    vector<bool> is_prime(estimated_limit + 1, true);
+    is_prime[0] = is_prime[1] = false;
+    for (ll i = 2; i * i <= estimated_limit; ++i) {
+        if (is_prime[i]) {
+            for (ll j = i * i; j <= estimated_limit; j += i) {
+                is_prime[j] = false;
+            }
+        }
+    }
+    vector<ll> primes;
+    for (ll i = 2; i <= estimated_limit && primes.size() < limit; ++i) {
+        if (is_prime[i]) {
+            primes.push_back(i);
+        }
+    }
+    return primes;
+}
+*/
+/*binary exponentiation
+ll binpow(ll a, ll b, ll m) {
+    ll res = 1;
+    while (b > 0) {
+        if (b % 2 == 1) {
+            res = (res * a) % m;
+        }
+        a = (a * a) % m;
+        b /= 2;
+    }
+    return res;
+}
+*/

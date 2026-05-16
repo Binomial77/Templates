@@ -1,0 +1,40 @@
+struct LCA{
+    ll n,LOG;
+    vector<vector<ll>> adj,st;
+    vector<ll> euler,depth,first;
+    LCA(vector<vector<ll>> &a,ll r=0){
+        adj=a; n=a.size();
+        first.assign(n,-1);
+        dfs(r,-1,0);
+        ll m=euler.size();
+        LOG=32-__builtin_clz(m);
+        st.assign(LOG,vector<ll>(m));
+        for(ll i=0;i<m;i++) st[0][i]=i;
+        for(ll k=1;k<LOG;k++)
+            for(ll i=0;i+(1<<k)<=m;i++){
+                ll x=st[k-1][i], y=st[k-1][i+(1<<(k-1))];
+                st[k][i]=depth[x]<depth[y]?x:y;
+            }
+    }
+    void dfs(ll v,ll p,ll d){
+        first[v]=euler.size();
+        euler.push_back(v);
+        depth.push_back(d);
+        for(ll u:adj[v]){
+            if(u==p)continue;
+            dfs(u,v,d+1);
+            euler.push_back(v);
+            depth.push_back(d);
+        }
+    }
+    ll rmq(ll l,ll r){
+        ll len=r-l+1, k=31-__builtin_clz(len);
+        ll x=st[k][l], y=st[k][r-(1<<k)+1];
+        return depth[x]<depth[y]?x:y;
+    }
+    ll get(ll a,ll b){
+        ll l=first[a], r=first[b];
+        if(l>r) swap(l,r);
+        return euler[rmq(l,r)];
+    }
+};

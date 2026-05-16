@@ -1,0 +1,78 @@
+struct SegmentTree {
+    ll n;
+    vector<ll> tree_max, tree_min, tree_sum;  
+    SegmentTree(const vector<ll>& data) {
+        n = data.size();
+        tree_max.resize(4 * n);
+        tree_min.resize(4 * n);
+        tree_sum.resize(4 * n);
+        build(data, 0, 0, n - 1);
+    }
+    void build(const vector<ll>& data, ll node, ll left, ll right) {
+        if (left == right) {
+            tree_max[node] = data[left];
+            tree_min[node] = data[left];
+            tree_sum[node] = data[left];   
+        } else {
+            ll mid = (left + right) / 2;
+            build(data, 2 * node + 1, left, mid);
+            build(data, 2 * node + 2, mid + 1, right);
+            tree_max[node] = max(tree_max[2 * node + 1], tree_max[2 * node + 2]);
+            tree_min[node] = min(tree_min[2 * node + 1], tree_min[2 * node + 2]);
+            tree_sum[node] = tree_sum[2 * node + 1] + tree_sum[2 * node + 2]; 
+        }
+    }
+    ll query_max(ll l, ll r) {
+        return query_max(0, 0, n - 1, l, r);
+    }
+    ll query_max(ll node, ll left, ll right, ll l, ll r) {
+        if (r < left || right < l) return LLONG_MIN;
+        if (l <= left && right <= r) return tree_max[node];
+        ll mid = (left + right) / 2;
+        ll left_max = query_max(2 * node + 1, left, mid, l, r);
+        ll right_max = query_max(2 * node + 2, mid + 1, right, l, r);
+        return max(left_max, right_max);
+    }
+    ll query_min(ll l, ll r) {
+        return query_min(0, 0, n - 1, l, r);
+    }
+    ll query_min(ll node, ll left, ll right, ll l, ll r) {
+        if (r < left || right < l) return LLONG_MAX;
+        if (l <= left && right <= r) return tree_min[node];
+        ll mid = (left + right) / 2;
+        ll left_min = query_min(2 * node + 1, left, mid, l, r);
+        ll right_min = query_min(2 * node + 2, mid + 1, right, l, r);
+        return min(left_min, right_min);
+    }
+    ll query_sum(ll l, ll r) {
+        return query_sum(0, 0, n - 1, l, r);
+    }
+    ll query_sum(ll node, ll left, ll right, ll l, ll r) {
+        if (r < left || right < l) return 0; 
+        if (l <= left && right <= r) return tree_sum[node]; 
+        ll mid = (left + right) / 2;
+        ll left_sum = query_sum(2 * node + 1, left, mid, l, r);
+        ll right_sum = query_sum(2 * node + 2, mid + 1, right, l, r);
+        return left_sum + right_sum;
+    }
+    void update(ll index, ll value) {
+        update(0, 0, n - 1, index, value);
+    }
+    void update(ll node, ll left, ll right, ll index, ll value) {
+        if (left == right) {
+            tree_max[node] = value;
+            tree_min[node] = value;
+            tree_sum[node] = value;  
+        } else {
+            ll mid = (left + right) / 2;
+            if (index <= mid) {
+                update(2 * node + 1, left, mid, index, value);
+            } else {
+                update(2 * node + 2, mid + 1, right, index, value);
+            }
+            tree_max[node] = max(tree_max[2 * node + 1], tree_max[2 * node + 2]);
+            tree_min[node] = min(tree_min[2 * node + 1], tree_min[2 * node + 2]);
+            tree_sum[node] = tree_sum[2 * node + 1] + tree_sum[2 * node + 2]; 
+        }
+    }
+};

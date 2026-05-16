@@ -1,0 +1,74 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+// ✅ Correct version using index tracking
+string solve_correct(vector<int> v, int k) {
+    int n = v.size();
+    vector<pair<int, int>> a(n);
+    for (int i = 0; i < n; i++) a[i] = {v[i], i};
+    sort(a.begin(), a.end());
+
+    int cnt = 1;
+    for (int i = 1; i < n; i++) {
+        if (a[i - 1].second + 1 != a[i].second)
+            cnt++;
+    }
+    return (cnt <= k ? "YES" : "NO");
+}
+
+// ❌ Buggy version using map and position diff
+string solve_buggy(vector<int> v, int k) {
+    int n = v.size();
+    vector<int> a = v;
+    sort(a.begin(), a.end());
+    map<int, int> mp;
+    for (int i = 0; i < n; i++) mp[v[i]] = i;
+
+    int counter = 0;
+    for (int i = 1; i < n; i++) {
+        if (mp[a[i]] - mp[a[i - 1]] != 1)
+            counter++;
+    }
+    return (counter <= k-1 ? "YES" : "NO");
+}
+
+int main() {
+    srand(time(0));
+    int tests = 100;
+
+    for (int t = 1; t <= tests; t++) {
+        int n = rand() % 10 + 1;         // Small n for easy debugging (1 to 10)
+        int k = rand() % (n + 2);        // k from 0 to n+1
+        vector<int> v(n);
+        set<int> used;
+        for (int i = 0; i < n; i++) {
+            int val;
+            do {
+                val = rand() % 20; // Ensure unique values
+            } while (used.count(val));
+            used.insert(val);
+            v[i] = val;
+        }
+
+        string res1 = solve_correct(v, k);
+        string res2 = solve_buggy(v, k);
+
+        if (res1 != res2) {
+            cout << "❌ Mismatch on test #" << t << endl;
+            cout << "Array: ";
+            for (int x : v) cout << x << " ";
+            cout << "\nk = " << k << endl;
+            cout << "Correct: " << res1 << ", Buggy: " << res2 << endl;
+            return 0; // Exit on first mismatch
+        }
+        else{
+            cout<<"correct output"<<endl;
+            cout<<"k="<<k<<endl;
+            for(auto it:v)cout<<it<<" ";
+            cout<<endl;
+        }
+    }
+
+    cout << "✅ All " << tests << " tests passed!" << endl;
+    return 0;
+}

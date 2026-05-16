@@ -1,0 +1,33 @@
+struct MergeSortTree {
+    ll n;
+    vector<vector<ll>> tree;
+    MergeSortTree(const vector<ll>& arr) {
+        n = arr.size();
+        tree.resize(4 * n);
+        build(arr, 0, 0, n - 1);
+    }
+    void build(const vector<ll>& arr, ll node, ll left, ll right) {
+        if (left == right) {
+            tree[node] = {arr[left]};
+            return;
+        }
+        ll mid = (left + right) / 2;
+        build(arr, 2 * node + 1, left, mid);
+        build(arr, 2 * node + 2, mid + 1, right);
+        tree[node].resize(tree[2 * node + 1].size() + tree[2 * node + 2].size());
+        merge(tree[2 * node + 1].begin(), tree[2 * node + 1].end(),
+              tree[2 * node + 2].begin(), tree[2 * node + 2].end(),
+              tree[node].begin());
+    }
+    ll query(ll l, ll r, ll value) {
+        return query(0, 0, n - 1, l, r, value);
+    }
+    ll query(ll node, ll left, ll right, ll l, ll r, ll value) {
+        if (r < left || right < l) return 0;
+        if (l <= left && right <= r)
+            return upper_bound(tree[node].begin(), tree[node].end(), value) - tree[node].begin();
+        ll mid = (left + right) / 2;
+        return query(2 * node + 1, left, mid, l, r, value) +
+               query(2 * node + 2, mid + 1, right, l, r, value);
+    }
+};

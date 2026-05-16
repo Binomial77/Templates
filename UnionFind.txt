@@ -1,0 +1,22 @@
+struct UnionFind{
+    vector<ll>parent,size;
+    UnionFind(ll N){
+        parent.resize(N+1);
+        size.resize(N+1);
+    }
+    void Make_set(ll a){
+        parent[a]=a;
+        size[a]=1;
+    }
+    ll Find_leader(ll a){
+        return parent[a]=(parent[a]==a?a:Find_leader(parent[a]));
+    }
+    void Union(ll a,ll b){
+        ll LeaderA=Find_leader(a);
+        ll LeaderB=Find_leader(b);
+        if(LeaderA==LeaderB) return;
+        if(size[LeaderA]>size[LeaderB])swap(LeaderA,LeaderB);
+        parent[LeaderA]=LeaderB;
+        size[LeaderB]+=size[LeaderA];
+    }
+};
